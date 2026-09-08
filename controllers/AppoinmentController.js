@@ -2,34 +2,26 @@ const {PrismaClient} = require("@prisma/client")
 
 const prisma = new PrismaClient();
 
-const createAppointment = async (req,res)=>{
-    const{clientName,startTime,status,businessId} = req.body;
+const createAppointment = async (req, res) => {
+  // 1. Only extract safe fields from the user's request body
+  const { clientName, startTime } = req.body;
 
+  try {
     const appointment = await prisma.appointment.create({
-        data:{
-            clientName,
-            startTime,
-            status,
-            businessId
-        }
+      data: {
+        clientName,
+        startTime: new Date(startTime),
+        // 2. FORCE the businessId from the verified token middleware
+        businessId: req.user.businessId 
+      }
     });
+
     res.status(201).json(appointment);
-    try{
-        await prisma.appointment.create({
-            data:{
-                clientName,
-                startTime,
-                status,
-                businessId
-            }
-        });
-        res.status(201).json({message:"Appointment created successfully"});
-    }
-    catch(error){
-        console.error("Error creating appointment:",error);
-        res.status(500).json({error:"Internal server error"});
-    }
-}
+  } catch (error) {
+    console.error(error); // Helpful for debugging in the terminal
+    res.status(400).json({ error: 'Failed to create appointment', details: error.message });
+  }
+};
 
 const getAllAppointments = async (req,res)=>{
     try{

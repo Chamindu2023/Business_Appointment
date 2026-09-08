@@ -6,8 +6,8 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
-app.use('/api/auth', require('./route/authroute'));
-app.use('/api/appointment', require('./route/AppointmentRoute'));
+app.use('/api/auth', require('./route/authroute')); // Your existing auth line
+app.use('/api/appointments', require('./route/AppointmentRoute')); // Add this line!
 
 app.get('/api/health', async (req, res) => {
   try {
