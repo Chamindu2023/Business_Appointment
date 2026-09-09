@@ -1,13 +1,17 @@
 const express = require("express");
+const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
+const publicRoute = require("./route/publicRoute");
 require("dotenv").config();
 
 const app = express();
 const prisma = new PrismaClient();
 
+app.use(cors());
 app.use(express.json());
 app.use('/api/auth', require('./route/authroute')); // Your existing auth line
 app.use('/api/appointments', require('./route/AppointmentRoute')); // Add this line!
+app.use('/api/public', publicRoute);
 
 app.get('/api/health', async (req, res) => {
   try {

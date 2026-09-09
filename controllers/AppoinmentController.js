@@ -104,6 +104,28 @@ const cancelAppointment = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const createPublicAppointment = async (req, res) => {
+    try {
+        const {businessId, clientName, startTime } = req.body;
+        
+        if( !businessId ||!clientName ||!startTime){
+            return res.status(400).json({ error: "All fields are required" });
+        }
+        const newAppointment = await prisma.appointment.create({
+            data: {
+                
+                clientName,
+                startTime: new Date(startTime),
+                businessId: businessId,
+                status:"Scheduled"
+            }
+        });
+        res.status(201).json(newAppointment);
+    } catch (error) {
+        console.error("Error creating public appointment:", error);
+        res.status(500).json({ error: "Failed to create Appointment." });
+    }
+};
 
 module.exports = {
   createAppointment,
@@ -111,5 +133,6 @@ module.exports = {
   getAppointmentById,
   updateAppointment,
   deleteAppointment,
-  cancelAppointment
+  cancelAppointment,
+  createPublicAppointment,
 };
