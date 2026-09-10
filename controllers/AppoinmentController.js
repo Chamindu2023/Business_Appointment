@@ -10,6 +10,9 @@ const createAppointment = async (req, res) => {
     if(!clientName || !startTime){
       return res.status(400).json({error: "Missing required fields"});
     }
+    if (new Date(startTime) < new Date()) {
+      return res.status(400).json({ error: "Cannot book an appointment in the past." });
+    }
     const requestedTime = new Date(startTime);
     const windowStart = new Date(requestedTime.getTime() - 15 * 60000);
     const windowEnd = new Date(requestedTime.getTime() + 15 * 60000);
@@ -137,6 +140,9 @@ const createPublicAppointment = async (req, res) => {
         
         if (!businessId || !clientName || !startTime) {
             return res.status(400).json({ error: "All fields are required" });
+        }
+        if (new Date(startTime) < new Date()) {
+            return res.status(400).json({ error: "Cannot book an appointment in the past." });
         }
 
         // Validate that the business exists
