@@ -15,7 +15,21 @@ model Business {
   users              User[]
   appointments       Appointment[]
   createdAt          DateTime @default(now())
+  services           Service[]
 }
+
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  duration    Int
+  price       Float
+  business    Business @relation(fields: [businessId], references: [id])
+  businessId  String
+  appointments Appointment[]
+  createdAt   DateTime @default(now())
+}
+
 
 model User {
   id         String   @id @default(uuid())
@@ -36,4 +50,7 @@ model Appointment {
   
   business   Business @relation(fields: [businessId], references: [id])
   businessId String
+
+  service    Service?  @relation(fields: [serviceId], references: [id])
+  serviceId  String? 
 }
